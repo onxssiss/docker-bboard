@@ -1,0 +1,10 @@
+FROM php:7.2-fpm
+
+WORKDIR /app/birdboard
+
+RUN docker-php-ext-install pdo pdo_mysql mbstring
+
+COPY ./ ./
+
+RUN chmod -R 777 storage
+RUN chmod -R 777 bootstrap/cache
