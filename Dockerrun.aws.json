@@ -5,12 +5,14 @@
             "name": "birdboard",
             "image": "onxssis/birdboard-app",
             "hostname": "php",
+            "memory": 512,
             "essential": false
         },
         {
             "name": "nginx",
             "image": "onxssis/birdboard-nginx",
             "hostname": "nginx",
+            "memory": 128,
             "essential": true,
             "portMappings": [
                 {
