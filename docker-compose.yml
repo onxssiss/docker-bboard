@@ -23,11 +23,10 @@ services:
     container_name: nginx
     build:
       context: ./nginx
-      dockerfile: Dockerfile.dev
     ports:
       - '8000:80'
     volumes:
-      - .:/var/www/html
+      - .:/var/www
     depends_on:
       - php
       - mysql
@@ -39,9 +38,9 @@ services:
       context: .
     container_name: php
     volumes:
-      - /var/www/html/node_modules
-      - /var/www/html/vendor
-      - .:/var/www/html
+      - /var/www/node_modules
+      - /var/www/vendor
+      - .:/var/www
     networks:
       - birdboard-app
 volumes:
