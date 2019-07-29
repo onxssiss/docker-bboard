@@ -4,17 +4,6 @@ networks:
   birdboard-prod:
 
 services:
-  mysql:
-    image: mysql:5.7
-    restart: always
-    container_name: mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=birdboard
-      - MYSQL_DATABASE=birdboard
-      - MYSQL_USER=birdboard
-      - MYSQL_PASSWORD=secret
-    networks:
-      - birdboard-prod
   nginx:
     restart: always
     container_name: nginx
@@ -25,7 +14,6 @@ services:
       - '80:80'
     depends_on:
       - php
-      - mysql
     links:
       - php
     networks:
@@ -37,7 +25,5 @@ services:
     container_name: php
     networks:
       - birdboard-prod
-    links:
-      - mysql
     env_file:
       - ./.env
