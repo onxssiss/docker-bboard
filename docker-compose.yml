@@ -9,23 +9,25 @@ services:
     restart: always
     container_name: mysql
     environment:
-      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ROOT_PASSWORD=birdboard
       - MYSQL_DATABASE=birdboard
       - MYSQL_USER=birdboard
       - MYSQL_PASSWORD=secret
-      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    volumes:
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+      - dbdata:/var/lib/mysql
     networks:
       - birdboard-app
   nginx:
     restart: always
     container_name: nginx
-    image: nginx
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.dev
     ports:
       - '8000:80'
     volumes:
-      # - ./docker/nginx.conf:/etc/nginx/nginx.conf
-      - .:/app/birdboard
-      - ./.docker/default.conf:/etc/nginx/conf.d/default.conf
+      - .:/var/www/html
     depends_on:
       - php
       - mysql
@@ -37,6 +39,10 @@ services:
       context: .
     container_name: php
     volumes:
-      - .:/app/birdboard
+      - /var/www/html/node_modules
+      - /var/www/html/vendor
+      - .:/var/www/html
     networks:
       - birdboard-app
+volumes:
+  dbdata:

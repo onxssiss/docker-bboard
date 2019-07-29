@@ -1,10 +1,58 @@
 FROM php:7.2-fpm
 
-WORKDIR /app/birdboard
+ENV APP_HOME /var/www/html
 
-RUN docker-php-ext-install pdo pdo_mysql mbstring
+# Copy composer.lock and composer.json
+COPY composer.lock composer.json $APP_HOME/
+COPY package-lock.json package.json $APP_HOME/
 
-COPY ./ ./
+WORKDIR $APP_HOME
 
-RUN chmod -R 777 storage
-RUN chmod -R 777 bootstrap/cache
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    zip \
+    unzip \
+    git \
+    curl
+
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install extensions
+RUN docker-php-ext-install pdo_mysql mbstring pdo
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN composer global require hirak/prestissimo
+
+# Node.js
+RUN curl -sL https://deb.nodesource.com/setup_12.x -o nodesource_setup.sh
+RUN bash nodesource_setup.sh
+RUN apt-get install nodejs -y
+RUN npm install npm@6.9.0 -g
+RUN command -v node
+RUN command -v npm
+
+# Add user for laravel application
+RUN groupadd -g 1000 www
+RUN useradd -u 1000 -ms /bin/bash -g www www
+
+COPY . $APP_HOME
+
+COPY --chown=www:www . /var/www/html
+
+RUN chown -R $USER:www storage
+RUN chown -R $USER:www bootstrap/cache
+
+RUN chmod -R 775 storage
+RUN chmod -R 775 bootstrap/cache
+
+RUN echo "$USER"
+
+USER www
+
+RUN bash -c "composer install --no-interaction"
+RUN bash -c "npm install"
+RUN bash -c "cp .env.example .env && php artisan key:generate"
