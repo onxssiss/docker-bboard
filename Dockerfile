@@ -2,12 +2,9 @@ FROM ubuntu:18.04
 
 WORKDIR /var/www
 
-ENV TZ=UTC
-
 RUN export LC_ALL=C.UTF-8
 RUN DEBIAN_FRONTEND=noninteractive
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN apt-get update -y && apt-get -qq -y install \
     sudo \
@@ -25,7 +22,7 @@ RUN apt-get update -y && apt-get -qq -y install \
 
 
 # PHP
-RUN LC_ALL=en_US.UTF-8 add-apt-repository ppa:ondrej/php && apt-get update && apt-get install -y php7.2 php7.2-fpm
+RUN add-apt-repository ppa:ondrej/php && apt-get update && apt-get install -y php7.2 php7.2-fpm
 RUN apt-get install -y \
     php7.2-curl \
     php7.2-gd \
@@ -60,7 +57,7 @@ COPY . .
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
 
 RUN npm install \
-    && npm run prod
+    && npm run production
 
 RUN chown -R $USER:www-data \
     /var/www/storage \
@@ -72,4 +69,4 @@ EXPOSE 80
 
 COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
 
-RUN bash -c "service php7.2-fpm start"
+CMD [ "bash", "post-install.sh" ]
