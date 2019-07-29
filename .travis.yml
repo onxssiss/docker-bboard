@@ -8,7 +8,9 @@ before_install:
 script:
   - docker run onxssis/birdboard-dev vendor/bin/phpunit
 
-# after_success:
-#   - docker build -t onxssis/birdboard .
-#   - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-#   - docker push onxssis/birdboard
+after_success:
+  - docker build -t onxssis/birdboard-app .
+  - docker build -t onxssis/birdboard-nginx -f Dockerfile.nginx .
+  - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+  - docker push onxssis/birdboard-app
+  - docker push onxssis/birdboard-nginx
