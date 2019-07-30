@@ -45,8 +45,8 @@ RUN bash -c "rm -rf node_modules && rm -rf index.nginx-debian.html"
 
 RUN cp .env.example .env && php artisan key:generate
 
-# RUN chmod -R 775 storage
-# RUN chmod -R 775 bootstrap/cache
+RUN chmod -R 777 storage
+RUN chmod -R 777 bootstrap/cache
 
 CMD ["/usr/bin/supervisord"]
 # RUN nginx
