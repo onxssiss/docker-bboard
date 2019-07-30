@@ -13,7 +13,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+<<<<<<< HEAD
         //
+=======
+        // if (env('APP_ENV') === 'production') {
+        //     \URL::forceScheme('https');
+        // }
+>>>>>>> c13cc08ea92831c433849b4ffd51d54ca775b321
     }
 
     /**
