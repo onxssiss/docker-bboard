@@ -8,22 +8,22 @@ before_install:
 script:
   - docker run onxssis/birdboard-dev vendor/bin/phpunit
 
-after_success:
-  - docker build -t onxssis/birdboard-app .
-  - docker build -t onxssis/birdboard-nginx -f Dockerfile.nginx .
-  - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-  - docker push onxssis/birdboard-app
-  - docker push onxssis/birdboard-nginx
+# after_success:
+#   - docker build -t onxssis/birdboard-app .
+#   - docker build -t onxssis/birdboard-nginx -f Dockerfile.nginx .
+#   - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+#   - docker push onxssis/birdboard-app
+#   - docker push onxssis/birdboard-nginx
 
-deploy:
-  provider: elasticbeanstalk
-  region: eu-west-2
-  app: birdboard
-  env: Birdboard-env
-  bucket_name: elasticbeanstalk-eu-west-2-239425645750
-  bucket_path: birdboard-docker
-  on:
-    branch: master
-  access_key_id: $AWS_ACCESS_ID
-  secret_access_key:
-    secure: $AWS_SECRET_KEY
+# deploy:
+#   provider: elasticbeanstalk
+#   region: eu-west-2
+#   app: birdboard
+#   env: Birdboard-env
+#   bucket_name: elasticbeanstalk-eu-west-2-239425645750
+#   bucket_path: birdboard-docker
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_ID
+#   secret_access_key:
+#     secure: $AWS_SECRET_KEY
