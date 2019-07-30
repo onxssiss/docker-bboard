@@ -17,6 +17,7 @@ spec:
           image: onxssis/birdboard-app-k8s
           ports:
             - containerPort: 80
+            - containerPort: 9000
           env:
             - name: DB_HOST
               value: mysql-service

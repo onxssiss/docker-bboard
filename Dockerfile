@@ -28,13 +28,15 @@ RUN npm install npm@6.9.0 -g
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY ./docker/nginx/default-prod.conf /etc/nginx/conf.d/default.conf
+COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 COPY . /var/www/html
+RUN usermod -u 1000 www-data
 WORKDIR /var/www/html
 
-RUN chown -R $USER:www-data storage
-RUN chown -R $USER:www-data bootstrap/cache
+# RUN chown -R $USER:www-data storage
+# RUN chown -R $USER:www-data bootstrap/cache
 
 RUN composer install --no-interaction --no-dev --prefer-dist
 RUN npm install && npm run prod
@@ -43,10 +45,10 @@ RUN bash -c "rm -rf node_modules && rm -rf index.nginx-debian.html"
 
 RUN cp .env.example .env && php artisan key:generate
 
-RUN chmod -R 775 storage
-RUN chmod -R 775 bootstrap/cache
+# RUN chmod -R 775 storage
+# RUN chmod -R 775 bootstrap/cache
 
-# CMD ["/usr/bin/supervisord"]
-RUN nginx
+CMD ["/usr/bin/supervisord"]
+# RUN nginx
 
 EXPOSE 80
