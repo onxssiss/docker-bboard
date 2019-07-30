@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: birdboard-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: birdboard
+  template:
+    metadata:
+      labels:
+        component: birdboard
+    spec:
+      containers:
+        - name: birdboard
+          image: onxssis/birdboard-app-k8s
+          ports:
+            - containerPort: 80
+          env:
+            - name: DB_HOST
+              value: mysql-service
+            - name: DB_DATABASE
+              value: birdboard
+            - name: DB_USERNAME
+              value: birdboard
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysqlsecret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: APP_ENV
+              value: production
+            - name: APP_DEBUG
+              value: "false"
