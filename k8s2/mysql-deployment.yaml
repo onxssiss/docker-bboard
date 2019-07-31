@@ -24,6 +24,7 @@ spec:
         volumeMounts:
           - name: mysql-storage
             mountPath: /var/lib/mysql
+            subPath: data
         env:
           - name: MYSQL_DATABASE
             value: birdboard
