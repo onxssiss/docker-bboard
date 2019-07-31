@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: birdboard-deployment
+spec:
+  selector:
+    matchLabels:
+      component: birdboard
+  template:
+    metadata:
+      labels:
+        component: birdboard
+    spec:
+      containers:
+      - name: birdboard-deployment
+        image: vkingmaker/birdboard
+        ports:
+        - containerPort: 80
+        env:
+         - name: APP_DEBUG
+           value: 'TRUE'
+         - name: APP_KEY
+           value: base64:JjS69jn/Ut7rRkQyrWI/zgpr2aDE/jYhhD8we9jXgRw=
+         - name: DB_HOST
+           value: mysql-cluster-ip-service
+         - name: DB_CONNECTION
+           value: mysql
+         - name: DB_DATABASE
+           value: 'birdboard'
+         - name: DB_PORT
+           value: '3306'
+         - name: DB_USERNAME
+           value: root
+         - name: DB_PASSWORD
+           valueFrom:
+             secretKeyRef:
+               name: mysqlsecret
+               key: MYSQL_ROOT_PASSWORD
