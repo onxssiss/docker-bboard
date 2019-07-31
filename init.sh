@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 
 echo 'Waiting for Mysql to be available'
 maxTries=10
