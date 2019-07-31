@@ -7,4 +7,5 @@ while [ ${maxTries} -gt 0 ] && ! mysql --user=${DB_USERNAME} --password=${DB_PAS
 done
 
 php artisan migrate --force
-/usr/local/sbin/php-fpm && /usr/sbin/nginx
+/usr/local/sbin/php-fpm
+nginx
