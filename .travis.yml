@@ -1,6 +1,10 @@
 sudo: required
 services:
   - docker
+env:
+  global:
+    - SHA=$(git rev-parse HEAD)
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
 before_install:
   - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d
@@ -9,19 +13,21 @@ before_install:
   - gcloud components update kubectl
   - gcloud auth activate-service-account --key-file service-account.json
   - gcloud container clusters get-credentials birdboard-cluster-1 --zone europe-west2-a --project birdboard-248314
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker build -t onxssis/birdboard-dev -f Dockerfile.dev .
 
 script:
   - docker run onxssis/birdboard-dev vendor/bin/phpunit
 
-after_success:
-  # - docker build -t onxssis/birdboard-app .
-  - docker build -t onxssis/birdboard-app-k8s .
-  - docker build -t onxssis/birdboard-nginx -f Dockerfile.nginx .
-  - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
-  - docker push onxssis/birdboard-app-k8s
-  - docker push onxssis/birdboard-nginx
+# after_success:
+#   # - docker build -t onxssis/birdboard-app .
+#   - docker build -t onxssis/birdboard-app-k8s .
+#   - docker build -t onxssis/birdboard-nginx -f Dockerfile.nginx .
+#   - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+#   - docker push onxssis/birdboard-app-k8s
+#   - docker push onxssis/birdboard-nginx
 
+# beanstalk
 # deploy:
 #   provider: elasticbeanstalk
 #   region: eu-west-2
@@ -34,3 +40,10 @@ after_success:
 #   access_key_id: $AWS_ACCESS_ID
 #   secret_access_key:
 #     secure: $AWS_SECRET_KEY
+
+# gcloud ke
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master
