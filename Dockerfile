@@ -39,9 +39,9 @@ WORKDIR /var/www/html
 # RUN chown -R $USER:www-data bootstrap/cache
 
 RUN composer install --no-interaction --no-dev --prefer-dist
-RUN npm install && npm run prod
+RUN npm install
 
-RUN bash -c "rm -rf node_modules && rm -rf index.nginx-debian.html"
+RUN bash -c "rm -rf index.nginx-debian.html"
 
 RUN cp .env.example .env && php artisan key:generate
 
