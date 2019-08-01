@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 # PHP Extensions
 RUN docker-php-ext-install mbstring pdo pdo_mysql
 
-RUN apt-get install net-tools vim nano -y
+RUN apt-get install supervisor net-tools vim nano -y
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
@@ -30,6 +30,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 COPY ./docker/nginx/default-prod.conf /etc/nginx/conf.d/default.conf
 COPY ./docker/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY .docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 COPY . /var/www/html
 RUN usermod -u 1000 www-data
